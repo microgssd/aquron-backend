@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Aquron CMS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#05071f;--sidebar:#080c24;--card:#0d1230;--bdr:rgba(0,201,255,0.15);--c1:#00C9FF;--c2:#4FFFB0;--gold:#FFD700;--text:#e0e8ff;--muted:rgba(224,232,255,0.45)}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;min-height:100vh}
+a{color:var(--c1);text-decoration:none}
+/* SIDEBAR */
+#sidebar{width:240px;background:var(--sidebar);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid var(--bdr)}
+.sb-brand h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-brand p{color:var(--muted);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.sb-nav{flex:1;padding:12px 0}
+.sb-section{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:10px 18px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-radius:0;transition:all 0.2s;color:var(--muted);font-size:13.5px;border-left:3px solid transparent}
+.nav-item:hover,.nav-item.active{color:#fff;background:rgba(0,201,255,0.08);border-left-color:var(--c1)}
+.nav-item .ico{font-size:15px;width:20px;text-align:center}
+.sb-footer{padding:16px 18px;border-top:1px solid var(--bdr)}
+.sb-user{display:flex;align-items:center;gap:10px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#030412}
+/* MAIN */
+#main{margin-left:240px;flex:1;padding:0}
+#topbar{background:var(--sidebar);border-bottom:1px solid var(--bdr);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99}
+#page-title{font-size:16px;font-weight:700}
+.tb-right{display:flex;align-items:center;gap:12px}
+.logout-btn{background:rgba(255,100,100,0.12);border:1px solid rgba(255,100,100,0.3);color:#ff9999;padding:5px 14px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:12.5px;transition:all 0.2s}
+.logout-btn:hover{background:rgba(255,100,100,0.22)}
+#content{padding:28px;min-height:calc(100vh - 56px)}
+/* CARDS */
+.page{display:none}.page.active{display:block}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:20px;transition:transform 0.2s}
+.stat-card:hover{transform:translateY(-3px)}
+.stat-card h3{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.stat-card p{color:var(--muted);font-size:13px}
+/* TABLES */
+.data-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--bdr)}
+.data-table th{background:rgba(0,201,255,0.08);padding:12px 16px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--c1);border-bottom:1px solid var(--bdr)}
+.data-table td{padding:12px 16px;border-bottom:1px solid rgba(0,201,255,0.06);font-size:13.5px;vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(0,201,255,0.04)}
+/* BADGES */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:rgba(79,255,176,0.12);color:#4FFFB0;border:1px solid rgba(79,255,176,0.3)}
+.badge-gray{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
+.badge-gold{background:rgba(255,215,0,0.12);color:#FFD700;border:1px solid rgba(255,215,0,0.3)}
+/* FORMS */
+.form-section{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:24px;margin-bottom:22px}
+.form-section h2{font-size:15px;font-weight:700;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--bdr);color:#fff}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+input[type=text],input[type=password],input[type=email],input[type=url],input[type=number],select,textarea{background:rgba(255,255,255,0.05);border:1px solid rgba(0,201,255,0.22);border-radius:8px;color:#fff;font-family:inherit;font-size:13.5px;padding:10px 13px;width:100%;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--c1);box-shadow:0 0 0 3px rgba(0,201,255,0.12)}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.25)}
+select option{background:#0d1230;color:#fff}
+textarea{resize:vertical;min-height:100px}
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:9px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:all 0.25s;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--c1),var(--c2));color:#030412}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,201,255,0.4)}
+.btn-gold{background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a0a00}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(255,165,0,0.4)}
+.btn-ghost{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8)}
+.btn-ghost:hover{background:rgba(255,255,255,0.1)}
+.btn-danger{background:rgba(255,80,80,0.15);border:1px solid rgba(255,80,80,0.3);color:#ff8080}
+.btn-danger:hover{background:rgba(255,80,80,0.25)}
+.btn-sm{padding:5px 13px;font-size:12px}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+/* ALERT */
+.alert{padding:12px 16px;border-radius:10px;font-size:13.5px;margin-bottom:16px;display:none}
+.alert.show{display:block}
+.alert-success{background:rgba(79,255,176,0.1);border:1px solid rgba(79,255,176,0.3);color:#4FFFB0}
+.alert-error{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);color:#ff8080}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000}
+.login-card{background:var(--card);border:1px solid var(--bdr);border-radius:22px;padding:40px 36px;width:100%;max-width:400px;text-align:center}
+.login-card h1{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.login-card p{color:var(--muted);font-size:13.5px;margin-bottom:28px}
+/* TOGGLE */
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.toggle input{display:none}
+.toggle-track{width:40px;height:22px;background:rgba(255,255,255,0.1);border-radius:11px;position:relative;transition:background 0.2s;border:1px solid rgba(255,255,255,0.15)}
+.toggle input:checked + .toggle-track{background:var(--c1);border-color:var(--c1)}
+.toggle-thumb{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+.toggle input:checked + .toggle-track .toggle-thumb{left:20px}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,7,31,0.88);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal{background:#0d1230;border:1px solid var(--bdr);border-radius:18px;padding:28px;max-width:640px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.modal h2{font-size:17px;font-weight:800;margin-bottom:18px;color:#fff;padding-bottom:12px;border-bottom:1px solid var(--bdr)}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.6);font-size:16px}
+/* COLOR PICKER */
+.color-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.color-opt{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all 0.2s}
+.color-opt.selected,.color-opt:hover{border-color:white;transform:scale(1.15)}
+/* SECTIONS */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.section-header h2{font-size:18px;font-weight:700}
+/* ICON PICKER */
+.emoji-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;max-height:140px;overflow-y:auto;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;border:1px solid var(--bdr)}
+.emoji-opt{font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background 0.15s;border:2px solid transparent}
+.emoji-opt:hover,.emoji-opt.selected{background:rgba(0,201,255,0.15);border-color:var(--c1)}
+/* TAG INPUT */
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag-item{background:rgba(0,201,255,0.1);border:1px solid rgba(0,201,255,0.25);color:var(--c1);padding:3px 10px;border-radius:20px;font-size:12px;display:flex;align-items:center;gap:5px}
+.tag-remove{cursor:pointer;opacity:0.7;font-size:11px}
+.tag-remove:hover{opacity:1}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVE CMS
+════════════════════════════════ */
+@media (max-width: 900px) {
+  #sidebar {
+    position: fixed; left: -240px; transition: left 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  #sidebar.mob-open { left: 0; }
+  #main { margin-left: 0 !important; }
+  #mob-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 99;
+  }
+  #mob-overlay.open { display: block; }
+  #mob-toggle {
+    display: flex !important; align-items: center; justify-content: center;
+    width: 38px; height: 38px; background: rgba(0,201,255,0.1);
+    border: 1px solid rgba(0,201,255,0.3); border-radius: 8px;
+    cursor: pointer; font-size: 18px; color: #00C9FF;
+    margin-right: 8px;
+  }
+  .card-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .form-row  { grid-template-columns: 1fr !important; }
+  .data-table { font-size: 12px !important; }
+  .data-table th, .data-table td { padding: 8px 10px !important; }
+  #content { padding: 16px !important; }
+  #topbar  { padding: 0 14px !important; }
+  .modal   { padding: 20px 16px !important; margin: 10px !important; }
+  .emoji-grid { max-height: 110px !important; }
+  #about-stats-grid { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 560px) {
+  .card-grid  { grid-template-columns: 1fr !important; }
+  .data-table thead { display: none; }
+  .data-table, .data-table tbody, .data-table tr, .data-table td {
+    display: block; width: 100%;
+  }
+  .data-table tr { border: 1px solid var(--bdr); border-radius: 10px; margin-bottom: 10px; padding: 6px; }
+  .data-table td { border: none !important; padding: 5px 8px !important; font-size: 12.5px; }
+  .data-table td:first-child { font-size: 22px; }
+  .btn-row { flex-direction: column; }
+  .btn-row .btn { width: 100%; text-align: center; }
+  #topbar { height: 50px !important; }
+  #page-title { font-size: 14px !important; }
+  .login-card { padding: 28px 20px !important; }
+}
+
+
+/* Touch-friendly inputs (prevent iOS auto-zoom) */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+    min-height: 44px !important;
+  }
+  .btn { min-height: 44px !important; }
+  .nav-item { min-height: 48px !important; }
+  label { font-size: 12px !important; }
+  .toggle-track { width: 44px !important; height: 24px !important; }
+  .toggle-thumb { width: 18px !important; height: 18px !important; }
+  .toggle input:checked + .toggle-track .toggle-thumb { left: 22px !important; }
+  .sb-section { font-size: 10px !important; }
+  .sb-brand h1 { font-size: 17px !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="mob-overlay" onclick="closeSidebar()"></div>
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>Aquron CMS</h1>
+    <p>Sign in to manage your website content</p>
+    <div id="login-alert" class="alert"></div>
+    <div class="form-group" style="margin-bottom:14px;text-align:left">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="admin" autocomplete="username"/>
+    </div>
+    <div class="form-group" style="margin-bottom:22px;text-align:left">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:12px" onclick="doLogin()">Sign In →</button>
+    <p style="margin-top:14px;font-size:12px;color:var(--muted)">Default: admin / aquron2025</p>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="sb-brand">
+    <h1>Aquron CMS</h1>
+    <p>Content Manager</p>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="ico">📊</span>Dashboard</div>
+    <div class="sb-section">Content</div>
+    <div class="nav-item" onclick="showPage('site-settings')" id="nav-site-settings"><span class="ico">⚙️</span>Site Settings</div>
+    <div class="nav-item" onclick="showPage('hero')" id="nav-hero"><span class="ico">🏠</span>Hero / Homepage</div>
+    <div class="nav-item" onclick="showPage('about')" id="nav-about"><span class="ico">ℹ️</span>About Page</div>
+    <div class="nav-item" onclick="showPage('team')" id="nav-team"><span class="ico">👥</span>Team Members</div>
+    <div class="nav-item" onclick="showPage('portfolio')" id="nav-portfolio"><span class="ico">🎯</span>Portfolio</div>
+    <div class="nav-item" onclick="showPage('pricing')" id="nav-pricing"><span class="ico">💰</span>Pricing Plans</div>
+    <div class="sb-section">Blog</div>
+    <div class="nav-item" onclick="showPage('blogs')" id="nav-blogs"><span class="ico">📝</span>All Posts</div>
+    <div class="nav-item" onclick="showPage('new-post')" id="nav-new-post"><span class="ico">✏️</span>New Post</div>
+    <div class="sb-section">Settings</div>
+    <div class="nav-item" onclick="showPage('social')" id="nav-social"><span class="ico">🔗</span>Social Links</div>
+    <div class="nav-item" onclick="showPage('media')" id="nav-media"><span class="ico">🖼️</span>Media Library</div>
+    <div class="nav-item" onclick="showPage('account')" id="nav-account"><span class="ico">🔑</span>Account</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="user-avatar">A</div>
+      <div>
+        <div style="font-size:13px;font-weight:600" id="user-name">Admin</div>
+        <div style="font-size:11px;color:var(--muted)">Administrator</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="main">
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:0">
+      <button id="mob-toggle" style="display:none" onclick="toggleSidebar()">☰</button>
+      <div id="page-title">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <span style="font-size:12px;color:var(--muted)" id="topbar-time"></span>
+      <a href="http://localhost:3000" target="_blank" class="btn btn-ghost btn-sm">View Site ↗</a>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div id="content">
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="card-grid">
+        <div class="stat-card"><h3 id="stat-posts">-</h3><p>Blog Posts</p></div>
+        <div class="stat-card"><h3 id="stat-published">-</h3><p>Published Posts</p></div>
+        <div class="stat-card"><h3 id="stat-portfolio">-</h3><p>Portfolio Items</p></div>
+        <div class="stat-card"><h3 id="stat-team">-</h3><p>Team Members</p></div>
+      </div>
+      <div class="form-section">
+        <h2>Quick Links</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <button class="btn btn-ghost" onclick="showPage('new-post')">✏️ New Blog Post</button>
+          <button class="btn btn-ghost" onclick="showPage('portfolio')">🎯 Add Portfolio Item</button>
+          <button class="btn btn-ghost" onclick="showPage('social')">🔗 Update Social Links</button>
+          <button class="btn btn-ghost" onclick="showPage('site-settings')">⚙️ Site Settings</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <h2>Recent Blog Posts</h2>
+        <table class="data-table"><thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="recent-posts-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- SITE SETTINGS -->
+    <div id="page-site-settings" class="page">
+      <div id="alert-site" class="alert"></div>
+      <div class="form-section">
+        <h2>Site Information</h2>
+        <div class="form-row"><div class="form-group"><label>Site Name</label><input id="ss-name" type="text"/></div><div class="form-group"><label>Tagline</label><input id="ss-tagline" type="text"/></div></div>
+        <div class="form-row"><div class="form-group"><label>Email</label><input id="ss-email" type="email"/></div><div class="form-group"><label>Phone</label><input id="ss-phone" type="text"/></div></div>
+        <div class="form-row"><div class="form-group"><label>Location</label><input id="ss-location" type="text"/></div><div class="form-group"><label>Working Hours</label><input id="ss-hours" type="text"/></div></div>
+        <div class="form-row full"><div class="form-group"><label>Trust Badge Text</label><input id="ss-badge" type="text"/></div></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveSiteSettings()">Save Settings</button></div>
+      </div>
+    </div>
+
+    <!-- HERO CONTENT -->
+    <div id="page-hero" class="page">
+      <div id="alert-hero" class="alert"></div>
+      <div class="form-section">
+        <h2>Hero Section</h2>
+        <div class="form-row"><div class="form-group"><label>Main Headline</label><input id="h-headline" type="text"/></div><div class="form-group"><label>Primary CTA Button</label><input id="h-cta1" type="text"/></div></div>
+        <div class="form-row full"><div class="form-group"><label>Sub Heading</label><textarea id="h-sub" rows="3"></textarea></div></div>
+        <div class="form-row full"><div class="form-group"><label>Typing Words (comma-separated)</label><input id="h-words" type="text" placeholder="Fluid Websites, Mobile Apps, E-Commerce"/></div></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveHero()">Save Hero Content</button></div>
+      </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="page-about" class="page">
+      <div id="alert-about" class="alert"></div>
+      <div class="form-section">
+        <h2>About Page Content</h2>
+        <div class="form-row full"><div class="form-group"><label>Heading</label><input id="ab-heading" type="text"/></div></div>
+        <div class="form-row full"><div class="form-group"><label>Paragraph 1</label><textarea id="ab-p1" rows="4"></textarea></div></div>
+        <div class="form-row full"><div class="form-group"><label>Paragraph 2</label><textarea id="ab-p2" rows="4"></textarea></div></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveAbout()">Save About Content</button></div>
+      </div>
+      <div class="form-section">
+        <h2>About Page Stats</h2>
+        <div id="about-stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px"></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveAboutStats()">Save Stats</button></div>
+      </div>
+    </div>
+
+    <!-- TEAM -->
+    <div id="page-team" class="page">
+      <div id="alert-team" class="alert"></div>
+      <div id="team-list"></div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div id="page-portfolio" class="page">
+      <div id="alert-portfolio" class="alert"></div>
+      <div class="section-header">
+        <h2>Portfolio Projects</h2>
+        <button class="btn btn-gold" onclick="openPortfolioModal(null)">+ Add Project</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Icon</th><th>Title</th><th>Category</th><th>Live Link</th><th>Featured</th><th>Actions</th></tr></thead>
+        <tbody id="portfolio-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- PRICING -->
+    <div id="page-pricing" class="page">
+      <div id="alert-pricing" class="alert"></div>
+      <div id="pricing-list"></div>
+    </div>
+
+    <!-- BLOGS LIST -->
+    <div id="page-blogs" class="page">
+      <div id="alert-blogs" class="alert"></div>
+      <div class="section-header">
+        <h2>Blog Posts</h2>
+        <button class="btn btn-gold" onclick="showPage('new-post')">+ New Post</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Icon</th><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead>
+        <tbody id="blogs-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- NEW/EDIT POST -->
+    <div id="page-new-post" class="page">
+      <div id="alert-post" class="alert"></div>
+      <input type="hidden" id="edit-post-id" value=""/>
+      <div class="section-header">
+        <h2 id="post-form-title">New Blog Post</h2>
+        <button class="btn btn-ghost" onclick="showPage('blogs')">← Back</button>
+      </div>
+      <div class="form-section">
+        <h2>Post Details</h2>
+        <div class="form-row"><div class="form-group"><label>Title *</label><input id="p-title" type="text" placeholder="Post title..."/></div><div class="form-group"><label>Slug</label><input id="p-slug" type="text" placeholder="auto-generated"/></div></div>
+        <div class="form-row"><div class="form-group"><label>Category</label>
+          <select id="p-cat"><option>Web Dev</option><option>Mobile</option><option>Payments</option><option>Design</option><option>Backend</option><option>Marketing</option><option>General</option></select>
+        </div><div class="form-group"><label>Read Time</label><input id="p-read" type="text" placeholder="5 min"/></div></div>
+        <div class="form-row"><div class="form-group"><label>Author</label><input id="p-author" type="text" placeholder="Sayan Dhar"/></div><div class="form-group"><label>Date</label><input id="p-date" type="text" placeholder="May 28, 2025"/></div></div>
+        <div class="form-row full"><div class="form-group"><label>Icon (Emoji)</label>
+          <input id="p-em" type="text" placeholder="💻" style="width:80px"/>
+          <div class="emoji-grid" id="emoji-grid"></div>
+        </div></div>
+        <div class="form-row full"><div class="form-group"><label>Accent Color</label>
+          <div class="color-options" id="post-color-opts"></div>
+        </div></div>
+      </div>
+      <div class="form-section">
+        <h2>Content</h2>
+        <div class="form-row full"><div class="form-group"><label>Excerpt *</label><textarea id="p-exc" rows="3" placeholder="Short description shown on listing..."></textarea></div></div>
+        <div class="form-row full"><div class="form-group"><label>Body Content * (use blank line between paragraphs)</label><textarea id="p-body" rows="14" placeholder="Write your post content here...&#10;&#10;Start a new paragraph with a blank line."></textarea></div></div>
+        <div class="form-row full"><div class="form-group"><label>Tags (press Enter to add)</label>
+          <input id="p-tag-input" type="text" placeholder="Add a tag and press Enter..."/>
+          <div class="tag-list" id="tag-list"></div>
+        </div></div>
+      </div>
+      <div class="form-section" style="display:flex;align-items:center;justify-content:space-between">
+        <label class="toggle"><input type="checkbox" id="p-published"/><span class="toggle-track"><span class="toggle-thumb"></span></span><span style="font-size:13.5px">Publish Post</span></label>
+        <div class="btn-row" style="margin:0">
+          <button class="btn btn-ghost" onclick="saveDraft()">Save Draft</button>
+          <button class="btn btn-primary" onclick="savePost()">Publish Post</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL LINKS -->
+    <div id="page-social" class="page">
+      <div id="alert-social" class="alert"></div>
+      <div class="form-section">
+        <h2>Social Media Links</h2>
+        <div class="form-row"><div class="form-group"><label>𝕏 Twitter / X</label><input id="sl-twitter" type="url" placeholder="https://twitter.com/..."/></div><div class="form-group"><label>LinkedIn</label><input id="sl-linkedin" type="url" placeholder="https://linkedin.com/company/..."/></div></div>
+        <div class="form-row"><div class="form-group"><label>GitHub</label><input id="sl-github" type="url" placeholder="https://github.com/..."/></div><div class="form-group"><label>Instagram</label><input id="sl-instagram" type="url" placeholder="https://instagram.com/..."/></div></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveSocial()">Save Social Links</button></div>
+      </div>
+    </div>
+
+    <!-- MEDIA LIBRARY -->
+    <div id="page-media" class="page">
+      <div id="alert-media" class="alert"></div>
+      <div class="section-header"><h2>Media Library</h2></div>
+      <div class="form-section">
+        <h2>Upload Image</h2>
+        <input type="file" id="media-file" accept="image/*" style="margin-bottom:12px;color:var(--text)"/>
+        <button class="btn btn-primary" onclick="uploadMedia()">Upload</button>
+      </div>
+      <div id="media-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:20px"></div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div id="page-account" class="page">
+      <div id="alert-account" class="alert"></div>
+      <div class="form-section" style="max-width:480px">
+        <h2>Change Password</h2>
+        <div class="form-group" style="margin-bottom:14px"><label>Current Password</label><input id="pw-current" type="password"/></div>
+        <div class="form-group" style="margin-bottom:14px"><label>New Password</label><input id="pw-new" type="password"/></div>
+        <div class="form-group" style="margin-bottom:18px"><label>Confirm New Password</label><input id="pw-confirm" type="password"/></div>
+        <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Portfolio Modal -->
+<div id="portfolio-modal" class="modal-overlay">
+  <div class="modal">
+    <span class="modal-close" onclick="closeModal('portfolio-modal')">✕</span>
+    <h2 id="port-modal-title">Add Project</h2>
+    <input type="hidden" id="port-edit-id"/>
+    <div class="form-row"><div class="form-group"><label>Title *</label><input id="port-title" type="text"/></div><div class="form-group"><label>Category</label>
+      <select id="port-cat"><option>Web App</option><option>E-Commerce</option><option>Hybrid App</option><option>Web + Android</option><option>E-Learning</option><option>Digital Marketing</option></select>
+    </div></div>
+    <div class="form-row full"><div class="form-group"><label>Description</label><textarea id="port-desc" rows="3"></textarea></div></div>
+    <div class="form-row"><div class="form-group"><label>Tech Stack</label><input id="port-tech" type="text" placeholder="Next.js · Node.js · MongoDB"/></div><div class="form-group"><label>Live Link</label><input id="port-link" type="url"/></div></div>
+    <div class="form-row"><div class="form-group"><label>Icon (Emoji)</label><input id="port-em" type="text" placeholder="🎯" style="width:80px"/></div><div class="form-group"><label>Featured?</label>
+      <label class="toggle" style="margin-top:10px"><input type="checkbox" id="port-featured"/><span class="toggle-track"><span class="toggle-thumb"></span></span><span style="font-size:13px">Featured on homepage</span></label>
+    </div></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Results (one per line)</label><textarea id="port-results" rows="3" placeholder="50k+ users&#10;Sub-200ms loads&#10;99.9% uptime"></textarea></div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="savePortfolioItem()">Save Project</button><button class="btn btn-ghost" onclick="closeModal('portfolio-modal')">Cancel</button></div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:4000/api';
+let TOKEN = localStorage.getItem('cms_token');
+let currentTags = [];
+const EMOJIS = ['💻','📱','🛒','🎯','📊','📈','💳','✍️','🌐','🚀','🏠','💊','🚚','📚','🌍','⚡','🤖','🍎','🎨','🗄️','📣','🎮','🔥','💡'];
+const COLORS = ['#00C9FF','#4FFFB0','#FF9F43','#FC5C7D','#7c3aed','#3FC380','#F7971E','#FFD700','#FF6584'];
+
+// ── AUTH ──
+async function doLogin() {
+  const u = document.getElementById('login-user').value;
+  const p = document.getElementById('login-pass').value;
+  const al = document.getElementById('login-alert');
+  try {
+    const res = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username:u, password:p }) });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error);
+    TOKEN = d.token;
+    localStorage.setItem('cms_token', TOKEN);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('user-name').textContent = d.user.name;
+    document.getElementById('user-avatar').textContent = d.user.name.charAt(0);
+    loadDashboard();
+  } catch(e) {
+    al.textContent = e.message; al.className = 'alert alert-error show';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('cms_token');
+  location.reload();
+}
+
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${API}${path}`, opts);
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error || 'Request failed');
+  return d;
+}
+
+function showAlert(id, msg, type='success') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg; el.className = `alert alert-${type} show`;
+  setTimeout(() => el.className = 'alert', 3500);
+}
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if (pg) pg.classList.add('active');
+  const nav = document.getElementById('nav-'+id);
+  if (nav) nav.classList.add('active');
+  document.getElementById('page-title').textContent = nav?.textContent?.trim() || id;
+  // Load data
+  if (id === 'dashboard') loadDashboard();
+  if (id === 'site-settings') loadSiteSettings();
+  if (id === 'hero') loadHero();
+  if (id === 'about') loadAbout();
+  if (id === 'team') loadTeam();
+  if (id === 'portfolio') loadPortfolio();
+  if (id === 'pricing') loadPricing();
+  if (id === 'blogs') loadBlogs();
+  if (id === 'social') loadSocial();
+  if (id === 'media') loadMedia();
+  if (id === 'new-post') initNewPost();
+}
+
+// ── CLOCK ──
+setInterval(() => {
+  document.getElementById('topbar-time').textContent = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+}, 1000);
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  try {
+    const [blogs, content] = await Promise.all([api('GET','/blogs'), api('GET','/content')]);
+    document.getElementById('stat-posts').textContent = blogs.length;
+    document.getElementById('stat-published').textContent = blogs.filter(b=>b.published).length;
+    document.getElementById('stat-portfolio').textContent = (content.portfolio||[]).length;
+    document.getElementById('stat-team').textContent = (content.team||[]).length;
+    const tbody = document.getElementById('recent-posts-tbody');
+    tbody.innerHTML = blogs.slice(0,6).map(p => `
+      <tr>
+        <td>${p.em||'📝'} ${p.title}</td>
+        <td><span class="badge badge-gold">${p.cat}</span></td>
+        <td>${p.author||'-'}</td>
+        <td><span class="badge ${p.published?'badge-green':'badge-gray'}">${p.published?'Published':'Draft'}</span></td>
+        <td style="color:var(--muted);font-size:12px">${p.date||'-'}</td>
+      </tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+// ── SITE SETTINGS ──
+async function loadSiteSettings() {
+  const d = await api('GET','/content/siteSettings');
+  document.getElementById('ss-name').value = d.siteName||'';
+  document.getElementById('ss-tagline').value = d.tagline||'';
+  document.getElementById('ss-email').value = d.email||'';
+  document.getElementById('ss-phone').value = d.phone||'';
+  document.getElementById('ss-location').value = d.location||'';
+  document.getElementById('ss-hours').value = d.hours||'';
+  document.getElementById('ss-badge').value = d.trustBadge||'';
+}
+async function saveSiteSettings() {
+  try {
+    await api('PUT','/content/siteSettings', { siteName:v('ss-name'), tagline:v('ss-tagline'), email:v('ss-email'), phone:v('ss-phone'), location:v('ss-location'), hours:v('ss-hours'), trustBadge:v('ss-badge') });
+    showAlert('alert-site','Site settings saved!');
+  } catch(e) { showAlert('alert-site',e.message,'error'); }
+}
+
+// ── HERO ──
+async function loadHero() {
+  const d = await api('GET','/content/heroContent');
+  document.getElementById('h-headline').value = d.headline||'';
+  document.getElementById('h-sub').value = d.subHeading||'';
+  document.getElementById('h-cta1').value = d.ctaPrimary||'';
+  document.getElementById('h-words').value = (d.typingWords||[]).join(', ');
+}
+async function saveHero() {
+  try {
+    await api('PUT','/content/heroContent', { headline:v('h-headline'), subHeading:v('h-sub'), ctaPrimary:v('h-cta1'), typingWords:v('h-words').split(',').map(s=>s.trim()).filter(Boolean) });
+    showAlert('alert-hero','Hero content saved!');
+  } catch(e) { showAlert('alert-hero',e.message,'error'); }
+}
+
+// ── ABOUT ──
+async function loadAbout() {
+  const d = await api('GET','/content/aboutContent');
+  document.getElementById('ab-heading').value = d.heading||'';
+  document.getElementById('ab-p1').value = d.para1||'';
+  document.getElementById('ab-p2').value = d.para2||'';
+  const sg = document.getElementById('about-stats-grid');
+  sg.innerHTML = (d.stats||[]).map((s,i)=>`
+    <div class="form-group">
+      <label>Stat ${i+1}</label>
+      <input type="text" id="abs-n-${i}" value="${s.n}" placeholder="150+"/>
+      <input type="text" id="abs-l-${i}" value="${s.l}" placeholder="Projects" style="margin-top:6px"/>
+    </div>`).join('');
+}
+async function saveAbout() {
+  try {
+    await api('PUT','/content/aboutContent',{ heading:v('ab-heading'), para1:v('ab-p1'), para2:v('ab-p2') });
+    showAlert('alert-about','About content saved!');
+  } catch(e) { showAlert('alert-about',e.message,'error'); }
+}
+async function saveAboutStats() {
+  try {
+    const d = await api('GET','/content/aboutContent');
+    const stats = (d.stats||[]).map((_,i)=>({ n:v(`abs-n-${i}`)||'', l:v(`abs-l-${i}`)||'' }));
+    await api('PUT','/content/aboutContent',{ stats });
+    showAlert('alert-about','Stats saved!');
+  } catch(e) { showAlert('alert-about',e.message,'error'); }
+}
+
+// ── TEAM ──
+async function loadTeam() {
+  const d = await api('GET','/content/team');
+  document.getElementById('team-list').innerHTML = d.map(tm=>`
+    <div class="form-section" id="team-card-${tm.id}">
+      <h2>${tm.crEmoji||''} ${tm.name}</h2>
+      <div id="alert-team-${tm.id}" class="alert"></div>
+      <div class="form-row"><div class="form-group"><label>Name</label><input type="text" id="tm-name-${tm.id}" value="${tm.name||''}"/></div><div class="form-group"><label>Role</label><input type="text" id="tm-role-${tm.id}" value="${tm.role||''}"/></div></div>
+      <div class="form-row full"><div class="form-group"><label>Bio</label><textarea id="tm-bio-${tm.id}" rows="4">${tm.bio||''}</textarea></div></div>
+      <div class="form-row full"><div class="form-group"><label>Skills (separated by ·)</label><input type="text" id="tm-skills-${tm.id}" value="${tm.skills||''}"/></div></div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveTeamMember('${tm.id}')">Save</button></div>
+    </div>`).join('');
+}
+async function saveTeamMember(id) {
+  try {
+    await api('PUT',`/content/team/${id}`, { name:v(`tm-name-${id}`), role:v(`tm-role-${id}`), bio:v(`tm-bio-${id}`), skills:v(`tm-skills-${id}`) });
+    showAlert(`alert-team-${id}`,'Saved!');
+  } catch(e) { showAlert(`alert-team-${id}`,e.message,'error'); }
+}
+
+// ── PORTFOLIO ──
+async function loadPortfolio() {
+  const d = await api('GET','/content/portfolio/all');
+  document.getElementById('portfolio-tbody').innerHTML = d.map(p=>`
+    <tr>
+      <td style="font-size:22px">${p.em||'🎯'}</td>
+      <td style="font-weight:600">${p.title}</td>
+      <td><span class="badge badge-gold">${p.cat}</span></td>
+      <td>${p.link?`<a href="${p.link}" target="_blank" style="font-size:12px">↗ Visit</a>`:'-'}</td>
+      <td>${p.featured?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-gray">No</span>'}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="openPortfolioModal('${p.id}')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deletePortfolio('${p.id}')">Delete</button></td>
+    </tr>`).join('');
+}
+async function openPortfolioModal(id) {
+  document.getElementById('port-edit-id').value = id||'';
+  document.getElementById('port-modal-title').textContent = id ? 'Edit Project' : 'Add Project';
+  if (id) {
+    const d = await api('GET','/content/portfolio/all');
+    const p = d.find(x=>x.id===id);
+    if (p) {
+      document.getElementById('port-title').value = p.title||'';
+      document.getElementById('port-cat').value = p.cat||'Web App';
+      document.getElementById('port-desc').value = p.desc||'';
+      document.getElementById('port-tech').value = p.tech||'';
+      document.getElementById('port-link').value = p.link||'';
+      document.getElementById('port-em').value = p.em||'';
+      document.getElementById('port-featured').checked = !!p.featured;
+      document.getElementById('port-results').value = (p.results||p.res||[]).join('\n');
+    }
+  } else {
+    ['port-title','port-desc','port-tech','port-link','port-em','port-results'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('port-cat').value = 'Web App';
+    document.getElementById('port-featured').checked = false;
+  }
+  document.getElementById('portfolio-modal').classList.add('open');
+}
+async function savePortfolioItem() {
+  const id = document.getElementById('port-edit-id').value;
+  const body = { title:v('port-title'), cat:v('port-cat'), desc:v('port-desc'), tech:v('port-tech'), link:v('port-link'), em:v('port-em'), featured:document.getElementById('port-featured').checked, results: v('port-results').split('\n').filter(Boolean) };
+  try {
+    if (id) { await api('PUT',`/content/portfolio/${id}`,body); }
+    else { await api('POST','/content/portfolio/add',body); }
+    closeModal('portfolio-modal');
+    loadPortfolio();
+    showAlert('alert-portfolio',id?'Project updated!':'Project added!');
+  } catch(e) { alert(e.message); }
+}
+async function deletePortfolio(id) {
+  if (!confirm('Delete this project?')) return;
+  await api('DELETE',`/content/portfolio/${id}`);
+  loadPortfolio();
+}
+
+// ── PRICING ──
+async function loadPricing() {
+  const d = await api('GET','/content/pricingPlans');
+  document.getElementById('pricing-list').innerHTML = d.map(plan=>`
+    <div class="form-section">
+      <h2>${plan.name} Plan — $${plan.price}/${plan.per}</h2>
+      <div class="form-row">
+        <div class="form-group"><label>Plan Name</label><input type="text" id="pr-name-${plan.name}" value="${plan.name}"/></div>
+        <div class="form-group"><label>Price (USD)</label><input type="number" id="pr-price-${plan.name}" value="${plan.price}"/></div>
+      </div>
+      <div class="form-row full"><div class="form-group"><label>Features (one per line)</label><textarea id="pr-feats-${plan.name}" rows="6">${(plan.features||[]).join('\n')}</textarea></div></div>
+      <label class="toggle" style="margin-bottom:12px"><input type="checkbox" id="pr-pop-${plan.name}" ${plan.popular?'checked':''}/><span class="toggle-track"><span class="toggle-thumb"></span></span><span style="font-size:13px">Mark as Popular</span></label>
+      <div class="btn-row"><button class="btn btn-primary" onclick="savePlan('${plan.name}')">Save</button></div>
+    </div>`).join('');
+}
+async function savePlan(name) {
+  try {
+    await api('PUT',`/content/pricing/${name}`, { name:v(`pr-name-${name}`), price:parseInt(v(`pr-price-${name}`)), features:v(`pr-feats-${name}`).split('\n').filter(Boolean), popular:document.getElementById(`pr-pop-${name}`).checked });
+    showAlert('alert-pricing',`${name} plan saved!`);
+  } catch(e) { showAlert('alert-pricing',e.message,'error'); }
+}
+
+// ── BLOGS ──
+async function loadBlogs() {
+  const posts = await api('GET','/blogs');
+  document.getElementById('blogs-tbody').innerHTML = posts.map(p=>`
+    <tr>
+      <td style="font-size:20px">${p.em||'📝'}</td>
+      <td style="font-weight:600;max-width:260px">${p.title}</td>
+      <td><span class="badge badge-gold">${p.cat}</span></td>
+      <td style="color:var(--muted);font-size:12.5px">${p.author||'-'}</td>
+      <td><span class="badge ${p.published?'badge-green':'badge-gray'}">${p.published?'Published':'Draft'}</span></td>
+      <td style="color:var(--muted);font-size:12px">${p.updatedAt?new Date(p.updatedAt).toLocaleDateString():'-'}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="editPost(${p.id})">Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="togglePublish(${p.id})">${p.published?'Unpublish':'Publish'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePost(${p.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+function initNewPost() {
+  document.getElementById('edit-post-id').value = '';
+  document.getElementById('post-form-title').textContent = 'New Blog Post';
+  ['p-title','p-slug','p-exc','p-body','p-tag-input'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-read').value = '5 min';
+  document.getElementById('p-author').value = '';
+  document.getElementById('p-date').value = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('p-em').value = '📝';
+  document.getElementById('p-published').checked = false;
+  currentTags = [];
+  renderTags();
+  renderEmojiGrid();
+  renderColorOpts('post-color-opts','#00C9FF');
+  const titleEl = document.getElementById('p-title');
+  if (titleEl) titleEl.addEventListener('input', () => {
+    document.getElementById('p-slug').value = titleEl.value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  });
+}
+function renderEmojiGrid() {
+  document.getElementById('emoji-grid').innerHTML = EMOJIS.map(e=>`<span class="emoji-opt" onclick="selectEmoji('${e}')">${e}</span>`).join('');
+}
+function selectEmoji(em) {
+  document.getElementById('p-em').value = em;
+  document.querySelectorAll('.emoji-opt').forEach(el=>{ el.classList.toggle('selected', el.textContent===em); });
+}
+function renderColorOpts(containerId, selected) {
+  document.getElementById(containerId).innerHTML = COLORS.map(c=>`<div class="color-opt ${c===selected?'selected':''}" style="background:${c}" onclick="selectColor('${containerId}','${c}','p-em-color')"></div>`).join('');
+}
+let selectedColor = '#00C9FF';
+function selectColor(cid, col) {
+  selectedColor = col;
+  document.querySelectorAll(`#${cid} .color-opt`).forEach(el=>el.classList.toggle('selected',el.style.background===col||el.style.backgroundColor===col));
+}
+function renderTags() {
+  document.getElementById('tag-list').innerHTML = currentTags.map(t=>`<span class="tag-item">${t} <span class="tag-remove" onclick="removeTag('${t}')">✕</span></span>`).join('');
+}
+function removeTag(t) { currentTags = currentTags.filter(x=>x!==t); renderTags(); }
+document.getElementById('p-tag-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); const v2=e.target.value.trim(); if(v2&&!currentTags.includes(v2)){currentTags.push(v2);renderTags();} e.target.value=''; }
+});
+async function editPost(id) {
+  const p = await api('GET',`/blogs/${id}`);
+  document.getElementById('edit-post-id').value = p.id;
+  document.getElementById('post-form-title').textContent = 'Edit Post';
+  document.getElementById('p-title').value = p.title||'';
+  document.getElementById('p-slug').value = p.slug||'';
+  document.getElementById('p-exc').value = p.exc||'';
+  document.getElementById('p-body').value = p.body||'';
+  document.getElementById('p-cat').value = p.cat||'General';
+  document.getElementById('p-read').value = p.read||'5 min';
+  document.getElementById('p-author').value = p.author||'';
+  document.getElementById('p-date').value = p.date||'';
+  document.getElementById('p-em').value = p.em||'📝';
+  document.getElementById('p-published').checked = !!p.published;
+  currentTags = p.tags||[];
+  selectedColor = p.col||'#00C9FF';
+  renderTags(); renderEmojiGrid(); renderColorOpts('post-color-opts', selectedColor);
+  showPage('new-post');
+}
+async function savePost() {
+  document.getElementById('p-published').checked = true;
+  await _savePost();
+}
+async function saveDraft() {
+  document.getElementById('p-published').checked = false;
+  await _savePost();
+}
+async function _savePost() {
+  const id = v('edit-post-id');
+  const body = { title:v('p-title'), slug:v('p-slug'), exc:v('p-exc'), body:v('p-body'), cat:v('p-cat'), read:v('p-read'), author:v('p-author'), date:v('p-date'), em:v('p-em'), col:selectedColor, tags:currentTags, published:document.getElementById('p-published').checked };
+  try {
+    if (id) { await api('PUT',`/blogs/${id}`,body); showAlert('alert-post','Post updated!'); }
+    else { await api('POST','/blogs',body); showAlert('alert-post','Post created!'); document.getElementById('edit-post-id').value=''; }
+  } catch(e) { showAlert('alert-post',e.message,'error'); }
+}
+async function togglePublish(id) {
+  await api('PATCH',`/blogs/${id}/publish`,{});
+  loadBlogs();
+}
+async function deletePost(id) {
+  if (!confirm('Delete this post?')) return;
+  await api('DELETE',`/blogs/${id}`,{});
+  loadBlogs();
+}
+
+// ── SOCIAL ──
+async function loadSocial() {
+  const d = await api('GET','/content/social/links');
+  document.getElementById('sl-twitter').value = d.twitter||'';
+  document.getElementById('sl-linkedin').value = d.linkedin||'';
+  document.getElementById('sl-github').value = d.github||'';
+  document.getElementById('sl-instagram').value = d.instagram||'';
+}
+async function saveSocial() {
+  try {
+    await api('PUT','/content/social/links', { twitter:v('sl-twitter'), linkedin:v('sl-linkedin'), github:v('sl-github'), instagram:v('sl-instagram') });
+    showAlert('alert-social','Social links saved!');
+  } catch(e) { showAlert('alert-social',e.message,'error'); }
+}
+
+// ── MEDIA ──
+async function loadMedia() {
+  const files = await api('GET','/media/list');
+  document.getElementById('media-grid').innerHTML = files.map(f=>`
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;position:relative">
+      <img src="http://localhost:4000${f.url}" style="width:100%;height:120px;object-fit:cover"/>
+      <div style="padding:8px">
+        <p style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.filename}</p>
+        <button class="btn btn-danger btn-sm" style="margin-top:4px;width:100%" onclick="deleteMedia('${f.filename}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+async function uploadMedia() {
+  const file = document.getElementById('media-file').files[0];
+  if (!file) return;
+  const fd = new FormData(); fd.append('file', file);
+  const res = await fetch(`${API}/media/upload`, { method:'POST', headers:{'Authorization':`Bearer ${TOKEN}`}, body:fd });
+  const d = await res.json();
+  if (res.ok) { showAlert('alert-media','Uploaded!'); loadMedia(); } else showAlert('alert-media',d.error,'error');
+}
+async function deleteMedia(fn) {
+  if (!confirm('Delete this file?')) return;
+  await api('DELETE',`/media/${fn}`);
+  loadMedia();
+}
+
+// ── ACCOUNT ──
+async function changePassword() {
+  const c = v('pw-current'), n = v('pw-new'), cf = v('pw-confirm');
+  if (n !== cf) return showAlert('alert-account','Passwords do not match','error');
+  try {
+    await api('POST','/auth/change-password', { currentPassword:c, newPassword:n });
+    showAlert('alert-account','Password updated successfully!');
+    ['pw-current','pw-new','pw-confirm'].forEach(id=>document.getElementById(id).value='');
+  } catch(e) { showAlert('alert-account',e.message,'error'); }
+}
+
+// ── HELPERS ──
+const v = id => (document.getElementById(id)||{}).value || '';
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
+
+// ── INIT ──
+if (TOKEN) {
+  fetch(`${API}/auth/me`, { headers:{'Authorization':`Bearer ${TOKEN}`} })
+    .then(r => r.json())
+    .then(d => {
+      if (d.user) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('user-name').textContent = d.user.name;
+        document.getElementById('user-avatar').textContent = d.user.name.charAt(0);
+        loadDashboard();
+      } else { TOKEN = null; localStorage.removeItem('cms_token'); }
+    }).catch(() => { TOKEN = null; localStorage.removeItem('cms_token'); });
+} else {
+  document.getElementById('login-user').focus();
+}
+
+// ── Mobile sidebar ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mob-open');
+  document.getElementById('mob-overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('mob-overlay').classList.remove('open');
+}
+// Close sidebar after nav item click on mobile
+document.querySelectorAll('.nav-item').forEach(function(el) {
+  el.addEventListener('click', function() {
+    if (window.innerWidth <= 900) closeSidebar();
+  });
+});
+
+</script>
+</body>
+</html>

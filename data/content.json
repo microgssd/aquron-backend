@@ -1,0 +1,78 @@
+{
+  "siteSettings": {
+    "siteName": "Aquron",
+    "tagline": "Fluid Digital Solutions",
+    "email": "work2sayan@gmail.com",
+    "phone": "+91 XXXXX XXXXX",
+    "location": "Kolkata, West Bengal, India",
+    "hours": "Mon-Sat, 9AM-8PM IST",
+    "trustBadge": "Trusted by 150+ clients · 30+ countries · Kolkata, India"
+  },
+  "socialLinks": {
+    "twitter": "https://twitter.com/aquron",
+    "linkedin": "https://linkedin.com/company/aquron",
+    "github": "https://github.com/aquron",
+    "instagram": "https://instagram.com/aquron"
+  },
+  "heroContent": {
+    "headline": "We Craft Exceptional",
+    "subHeading": "Aquron is a full-service digital agency crafting fluid, high-performance websites, mobile apps, e-commerce, and marketing for bold brands worldwide.",
+    "ctaPrimary": "Deploy Your Project",
+    "ctaSecondary": "View Our Work",
+    "typingWords": ["Fluid Websites", "Mobile Apps", "E-Commerce", "Digital Growth", "Hybrid Apps", "SEO Strategy"]
+  },
+  "aboutContent": {
+    "heading": "We are Aquron -- Built for the Bold",
+    "para1": "Founded in Kolkata, India, Aquron started as a two-person studio and grew into a full-service digital agency with a global client roster. We have shipped products used by hundreds of thousands across 30+ countries.",
+    "para2": "Like water (aqua), we adapt to every challenge -- finding the most elegant, precise path. Like Clash Royale's best players, we deploy the right strategy at the right moment.",
+    "stats": [
+      { "n": "150+", "l": "Projects" },
+      { "n": "5+", "l": "Years" },
+      { "n": "15+", "l": "Team" },
+      { "n": "30+", "l": "Countries" }
+    ]
+  },
+  "stats": [
+    { "n": "150+", "l": "Projects Delivered" },
+    { "n": "98%", "l": "Client Satisfaction" },
+    { "n": "5+", "l": "Years Experience" },
+    { "n": "30+", "l": "Countries Served" }
+  ],
+  "team": [
+    {
+      "id": "sayan",
+      "name": "Sayan Dhar",
+      "role": "CEO & Development Head",
+      "bio": "Full-stack architect and founder of Aquron with 5+ years building scalable digital products for 150+ clients across 30+ countries.",
+      "skills": "React · Next.js · Node.js · MongoDB · System Architecture",
+      "crChar": "Barbarian King",
+      "crEmoji": "👑",
+      "col": "#FFD700"
+    },
+    {
+      "id": "ankan",
+      "name": "Ankan Ghosh",
+      "role": "Operations Manager",
+      "bio": "The operational backbone of Aquron. Ensures every project ships on time, every client receives white-glove service.",
+      "skills": "Project Management · Client Relations · Agile · Process Optimisation",
+      "crChar": "Grand Warden",
+      "crEmoji": "🗡️",
+      "col": "#00C9FF"
+    }
+  ],
+  "pricingPlans": [
+    { "name": "Starter", "price": 499, "per": "project", "col": "#4FFFB0", "popular": false, "features": ["5-Page Website", "Responsive Design", "Basic SEO", "Contact Form", "1 Revision", "2-Week Delivery"], "notIncluded": ["E-Commerce", "App Development", "Digital Marketing"] },
+    { "name": "Growth", "price": 1499, "per": "project", "col": "#00C9FF", "popular": true, "features": ["Up to 15 Pages", "Custom Design System", "Advanced SEO", "E-Commerce (100 products)", "Payment Integration", "Blog/CMS", "3 Revisions", "4-Week Delivery"], "notIncluded": ["App Development"] },
+    { "name": "Scale", "price": 3499, "per": "project", "col": "#7c3aed", "popular": false, "features": ["Unlimited Pages", "Full Custom Design", "Enterprise SEO", "Full E-Commerce", "Multi-Gateway Payments", "iOS or Android App", "Digital Marketing", "Unlimited Revisions", "8-Week Delivery"], "notIncluded": [] },
+    { "name": "Agency", "price": 299, "per": "month", "col": "#FF9F43", "popular": false, "features": ["Monthly Retainer", "Dedicated Developer", "Ongoing SEO", "Weekly Reports", "Priority Support", "Bug Fixes", "Content Updates", "Strategy Call"], "notIncluded": [] }
+  ],
+  "portfolio": [
+    { "id": "trueodds", "title": "TrueOdds", "cat": "Web App", "tech": "Next.js · Node.js · MongoDB", "em": "🎯", "col": "#FF9F43", "link": "https://trueodds.ca", "desc": "Canadian sports analytics -- real-time odds comparison & value bet detection across all major leagues.", "results": ["50k+ monthly users", "20+ books real-time", "Sub-200ms loads"], "featured": true },
+    { "id": "urbannest", "title": "UrbanNest", "cat": "E-Commerce", "tech": "Next.js · Stripe · MongoDB", "em": "🏠", "col": "#00C9FF", "link": "", "desc": "Luxury real-estate marketplace with virtual tours and Stripe subscription billing.", "results": ["$2M+ properties listed", "300% conversion lift", "Stripe billing"], "featured": true },
+    { "id": "pulsify", "title": "Pulsify Health", "cat": "Web App", "tech": "React · Node.js · PostgreSQL", "em": "💊", "col": "#4FFFB0", "link": "", "desc": "Healthcare SaaS with real-time vitals monitoring, appointment booking, and HIPAA-compliant storage.", "results": ["10k+ patients", "HIPAA compliant", "Real-time vitals"], "featured": true },
+    { "id": "godeliver", "title": "GoDeliver", "cat": "Hybrid App", "tech": "React Native · Firebase", "em": "🚚", "col": "#FF6584", "link": "", "desc": "Food-delivery app -- 50k+ daily orders across 12 cities with live GPS tracking.", "results": ["50k+ daily orders", "12 cities", "4.8 star rating"], "featured": false },
+    { "id": "cryptolens", "title": "CryptoLens", "cat": "Web + Android", "tech": "Flutter · Web3.js · Node.js", "em": "📊", "col": "#7c3aed", "link": "", "desc": "Multi-chain DeFi tracker with live feeds, biometric security, and automated tax reporting.", "results": ["135+ tokens tracked", "Biometric auth", "Tax reports"], "featured": false },
+    { "id": "litelms", "title": "LiteLMS", "cat": "E-Learning", "tech": "Next.js · Stripe · AWS", "em": "📚", "col": "#FC5C7D", "link": "", "desc": "Course marketplace with live streaming, AI-graded quizzes, and PayPal billing.", "results": ["5k+ courses hosted", "Stripe & PayPal", "AI grading"], "featured": false },
+    { "id": "nomadpr", "title": "NomadPR", "cat": "Digital Marketing", "tech": "WordPress · SEO · Meta Ads", "em": "🌍", "col": "#3FC380", "link": "", "desc": "Travel SEO + Meta retargeting -- 2k to 80k monthly organic visitors in 6 months.", "results": ["40x organic growth", "80k/month", "620% ROI"], "featured": false }
+  ]
+}
