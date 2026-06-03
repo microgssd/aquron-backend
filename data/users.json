@@ -2,7 +2,7 @@
   {
     "id": "1",
     "username": "admin",
-    "passwordHash": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+    "passwordHash": "$2a$10$giXjtpBxZa8nwJImXfn0j.p9em7edgRrmw7pa80zPDSy8l64JsCtC",
     "role": "admin",
     "name": "Admin User",
     "createdAt": "2025-01-01T00:00:00Z"
